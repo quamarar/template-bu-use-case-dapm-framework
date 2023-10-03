@@ -33,6 +33,7 @@ locals {
 resource "aws_s3_bucket" "analytics_bucket" {
   bucket        = replace("${var.name_prefix}-${local.context}", "_", "-")
   force_destroy = true
+
      server_side_encryption_configuration {
      rule {
        apply_server_side_encryption_by_default {
@@ -41,7 +42,7 @@ resource "aws_s3_bucket" "analytics_bucket" {
        }
      }
    }
-}
+ }
 
 resource "aws_s3_bucket_public_access_block" "analytics_bucket" {
   bucket = aws_s3_bucket.analytics_bucket.id
@@ -68,11 +69,12 @@ resource "aws_athena_database" "athena_db" {
   properties    = try(each.value.properties, null)
   comment       = try(each.value.description, null)
 
-    encryption_configuration {
+     encryption_configuration {
       encryption_option = "SSE_KMS"
       kms_key_arn       = module.common.kms_default.arn
     }
-}
+ }
+
 
 resource "aws_ssm_parameter" "ssm_params" {
 

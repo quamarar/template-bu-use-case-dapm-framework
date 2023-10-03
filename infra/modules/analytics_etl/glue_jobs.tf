@@ -27,10 +27,12 @@ locals {
         tfvars_workflow_count_ssm_param_name = "/${var.name_prefix}-dapf-ssm/${local.context}/expected_dq_job_cnt"
         tfvars_dq_athena_db                  = replace("${var.name_prefix}-data_quality", "-", "_")
         tfvars_dq_s3_bucket                  = replace("${var.name_prefix}-${local.context}", "_", "-")
+        tfvars_eap_dq_bucket_name            = var.eap_dq_bucket_name
+        tfvars_use_case_name                 = var.use_case_name
     })
   ]
 
-  merged_glue_jsons = try(jsondecode(data.utils_deep_merge_json.merged_json.output), {})
+  merged_glue_jsons = jsondecode(data.utils_deep_merge_json.merged_json.output)
 }
 
 
@@ -39,7 +41,7 @@ locals {
 /* -------------------------------------------------------------------------- */
 
 module "glue_jobs" {
-  source = "git::https://github.com/quamarar/terraform-common-modules//terraform-aws-glue-job?ref=master"
+  source = "github.com/MSIL-Analytics-ACE/terraform-common-modules//terraform-aws-glue-job?ref=main"
 
   for_each = try(local.merged_glue_jsons.jobs, {})
 
@@ -80,6 +82,13 @@ resource "aws_s3_object" "upload_utils" {
 
   source      = "${var.utils_path}/${each.value}"
   source_hash = filemd5("${var.utils_path}/${each.value}")
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+      tags_all
+    ]
+  }
 }
 
 resource "aws_s3_object" "upload_ext_scripts" {
@@ -96,10 +105,17 @@ resource "aws_s3_object" "upload_ext_scripts" {
 
   source      = "${each.value.filePath}/${each.value.fileName}"
   source_hash = filemd5("${each.value.filePath}/${each.value.fileName}")
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+      tags_all
+    ]
+  }
 }
 
 module "glue_wfs" {
-  source = "../terraform-aws-glue-workflow/"
+  source = "github.com/MSIL-Analytics-ACE/terraform-common-modules//terraform-aws-glue-workflow?ref=main"
 
   for_each = try(local.merged_glue_jsons.workflows, {})
 

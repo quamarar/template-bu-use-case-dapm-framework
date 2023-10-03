@@ -1,12 +1,12 @@
 provider "aws" {
   region = var.region
 
-  assume_role {
-    role_arn = "arn:aws:iam::${var.account_number}:role/Cross-Account-role"
-  }
+   assume_role {
+     role_arn = "arn:aws:iam::${var.account_number}:role/Jenkins-AssumeRole-ProServe-CrossAccount-Role"
+   }
 
   forbidden_account_ids = [
-    "209991378390"
+    "836350033173"
   ]
 
   default_tags {
@@ -32,5 +32,6 @@ terraform {
       version = ">= 0.49.0"
     }
   }
+
 }
 

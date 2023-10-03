@@ -4,6 +4,11 @@ variable "name_prefix" {
   description = "Prefix to be appended to all resource names"
 }
 
+variable "use_case_name" {
+  type        = string
+  description = "use case name identifier"
+}
+
 variable "athena_databases" {
   type        = any
   description = "athena db names"
@@ -29,4 +34,10 @@ variable "utils_path" {
 variable "expected_dq_job_count" {
   type        = number
   description = "Expected number of ETL dq jobs which are matched for email functionality"
+}
+
+variable "eap_dq_bucket_name" {
+  type        = string
+  description = "S3 bucket name from EAP account"
+  default     = "random"
 }

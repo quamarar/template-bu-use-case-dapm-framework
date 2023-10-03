@@ -64,9 +64,11 @@ module "analytics_etl" {
   source = "./modules/analytics_etl"
 
   name_prefix                = local.name_prefix
-  etl_glue_config_json_paths = try([for file in local.analytics_etl_defaults.glue_config_paths : "${path.root}/../${file}"], [])
+  etl_glue_config_json_paths = [for file in local.analytics_etl_defaults.glue_config_paths : "${path.root}/../${file}"]
   utils_path                 = "${path.root}/../${var.utils_path}"
   expected_dq_job_count      = var.analytics_etl.expected_dq_job_count
+  eap_dq_bucket_name         = var.eap_dq_bucket_name
+  use_case_name              = var.use_case_name
 }
 
 
@@ -76,7 +78,7 @@ module "analytics_etl" {
 
 # TODO Add SSE to S3 buckets
 module "batch_training" {
-  source = "git::https://github.com/quamarar/terraform-awsproserv-dapm-framework//constructs/batch_training?ref=master"
+  source = "github.com/MSIL-Analytics-ACE/terraform-awsproserv-dapm-framework//constructs/batch_training?ref=main"
 
   name_prefix   = local.name_prefix
   use_case_name = var.use_case_name
@@ -93,6 +95,7 @@ module "batch_training" {
     path = "${path.root}/../${local.training_defaults.gatekeeper_path}"
   })
 
+  eap_dq_bucket_name       = var.eap_dq_bucket_name
   event_bus_name           = module.common.event_bus.name
   model_package_group_name = module.common.sagemaker_mpg.id
 
@@ -104,7 +107,7 @@ module "batch_training" {
 ===============================*/
 
 module "batch_inferencing" {
-  source = "git::https://github.com/quamarar/terraform-awsproserv-dapm-framework//constructs/batch_inferencing?ref=master"
+  source = "github.com/MSIL-Analytics-ACE/terraform-awsproserv-dapm-framework//constructs/batch_inferencing?ref=main"
 
   name_prefix   = local.name_prefix
   use_case_name = var.use_case_name
@@ -123,7 +126,8 @@ module "batch_inferencing" {
 
   sagemaker_processing_job_execution_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.sagemaker_processing_job_execution_role_name}"
 
-  batch_vpc = var.inferencing.batch_vpc
+  eap_dq_bucket_name = var.eap_dq_bucket_name
+  batch_vpc          = var.inferencing.batch_vpc
 }
 
 /*===============================
@@ -131,7 +135,7 @@ module "batch_inferencing" {
 ===============================*/
 
 module "monitoring" {
-  source = "git::https://github.com/quamarar/terraform-awsproserv-dapm-framework//constructs/monitoring?ref=master"
+  source = "github.com/MSIL-Analytics-ACE/terraform-awsproserv-dapm-framework//constructs/monitoring?ref=main"
 
   count = var.enable_monitoring ? 1 : 0
 
@@ -197,6 +201,7 @@ locals {
     }
 
     inferencing_step_function_inputs = {
+      repository                              = var.repo_url
       use_case_name                           = var.use_case_name
       region                                  = var.region
       step_function_arn                       = module.batch_inferencing.inferencing_contruct.step_function.state_machine_arn
@@ -245,4 +250,11 @@ resource "aws_s3_object" "upload_mapping_json" {
 
   source      = local.mapping_json_path
   source_hash = filemd5(local.mapping_json_path)
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+      tags_all
+    ]
+  }
 }
