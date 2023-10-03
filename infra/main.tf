@@ -78,7 +78,7 @@ module "analytics_etl" {
 
 # TODO Add SSE to S3 buckets
 module "batch_training" {
-  source = "github.com/MSIL-Analytics-ACE/terraform-awsproserv-dapm-framework//constructs/batch_training?ref=main"
+  source = "git::https://github.com/quamarar/terraform-awsproserv-dapm-framework//constructs/batch_training?ref=master"
 
   name_prefix   = local.name_prefix
   use_case_name = var.use_case_name
@@ -107,7 +107,7 @@ module "batch_training" {
 ===============================*/
 
 module "batch_inferencing" {
-  source = "github.com/MSIL-Analytics-ACE/terraform-awsproserv-dapm-framework//constructs/batch_inferencing?ref=main"
+  source = "git::https://github.com/quamarar/terraform-awsproserv-dapm-framework//constructs/batch_inferencing?ref=master"
 
   name_prefix   = local.name_prefix
   use_case_name = var.use_case_name
@@ -135,7 +135,7 @@ module "batch_inferencing" {
 ===============================*/
 
 module "monitoring" {
-  source = "github.com/MSIL-Analytics-ACE/terraform-awsproserv-dapm-framework//constructs/monitoring?ref=main"
+  source = "git::https://github.com/quamarar/terraform-awsproserv-dapm-framework//constructs/monitoring?ref=master"
 
   count = var.enable_monitoring ? 1 : 0
 

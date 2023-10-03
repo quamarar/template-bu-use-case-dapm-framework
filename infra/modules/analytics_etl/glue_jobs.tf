@@ -41,7 +41,7 @@ locals {
 /* -------------------------------------------------------------------------- */
 
 module "glue_jobs" {
-  source = "github.com/MSIL-Analytics-ACE/terraform-common-modules//terraform-aws-glue-job?ref=main"
+  source = "git::https://github.com/quamarar/terraform-common-modules//terraform-aws-glue-job?ref=master"
 
   for_each = try(local.merged_glue_jsons.jobs, {})
 
@@ -115,7 +115,7 @@ resource "aws_s3_object" "upload_ext_scripts" {
 }
 
 module "glue_wfs" {
-  source = "github.com/MSIL-Analytics-ACE/terraform-common-modules//terraform-aws-glue-workflow?ref=main"
+  source = "git::https://github.com/quamarar/terraform-common-modules//terraform-aws-glue-workflow?ref=master"
 
   for_each = try(local.merged_glue_jsons.workflows, {})
 
