@@ -1,13 +1,12 @@
-multibranchPipelineJob('MSIL_Analytics_ACE/quality-dcp/modelops-model-step-function-orchestrator') {
+multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/modelops-model-step-function-orchestrator') {
 
     branchSources {
         branchSource {
             source {
                 github {
                      id('modelops-model-step-function-orchestrator')
-                     repositoryUrl ('quality-dcp')
-                     repository('quality-dcp')
-                     credentialsId('Github-jenkins')
+                     repositoryUrl ('template-bu-use-case-dapm-framework')
+                     repository('template-bu-use-case-dapm-framework')
                      configuredByUrl(false)
                      repoOwner('MSIL-Analytics-ACE')
                       traits {

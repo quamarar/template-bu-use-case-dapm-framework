@@ -1,4 +1,4 @@
-multibranchPipelineJob('MSIL_Analytics_ACE/quality-dcp/terraform-infra-deploy') {
+multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/terraform-infra-deploy') {
 
 
     branchSources {
@@ -6,9 +6,8 @@ multibranchPipelineJob('MSIL_Analytics_ACE/quality-dcp/terraform-infra-deploy') 
             source {
                 github {
                      id('terraform-infra-deploy')
-                     repositoryUrl ('quality-dcp')
-                     repository('quality-dcp')
-                     credentialsId('marutideep')
+                     repositoryUrl ('template-bu-use-case-dapm-framework')
+                     repository('template-bu-use-case-dapm-framework')
                      configuredByUrl(false)
                      repoOwner('MSIL-Analytics-ACE')
                       traits {

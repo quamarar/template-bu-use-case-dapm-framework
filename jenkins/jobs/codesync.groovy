@@ -1,13 +1,12 @@
-multibranchPipelineJob('MSIL_Analytics_ACE/quality-dcp/aws-code-sync') {
+multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/aws-code-sync') {
 
     branchSources {
         branchSource {
             source {
                 github {
                      id('aws-code-sync')
-                     repositoryUrl ('quality-dcp')
-                     repository('quality-dcp')
-                     credentialsId('Github-jenkins')
+                     repositoryUrl ('template-bu-use-case-dapm-framework')
+                     repository('template-bu-use-case-dapm-framework')
                      configuredByUrl(false)
                      repoOwner('MSIL-Analytics-ACE')
                       traits {
