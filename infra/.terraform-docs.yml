@@ -1,0 +1,25 @@
+formatter: markdown
+header-from: .header.md
+settings:
+  anchor: true
+  color: true
+  default: true
+  escape: true
+  html: true
+  indent: 3
+  required: true
+  sensitive: true
+  type: true
+  lockfile: false
+
+sort:
+  enabled: true
+  by: required
+
+recursive:
+  enabled: true
+  path: modules
+
+output:
+  file: README.md
+  mode: replace
