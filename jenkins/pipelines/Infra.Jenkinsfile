@@ -1,12 +1,3 @@
-def jenkins_role = "Cross-Account-role'"
-def environment_mapping = [
-    "master" : "dev",
-    "uat" : "uat",
-    "prod": "production"
-]
-def target_env = environment_mapping[BRANCH_NAME]
-def tf_config_file = "env/${target_env}.tfvars.json"
-def regex = /(production|master|uat)/
 
 pipeline {
     agent any
@@ -19,26 +10,11 @@ pipeline {
         )
     }
 
-    environment {
-        ENV_TF_VARS = "$tf_config_file"
-        PYTHONDONTWRITEBYTECODE=1
-    }
 
     stages {
 
         stage('Initialise terraform directory') {
             steps{
-
-                sh 'ls -ltr'
-
-                script {
-                    try {
-                        def config = readJSON file: tf_config_file
-                    } catch (Exception e) {
-                        error("Cannot read config file.\nError:\n${e}")
-                    }
-                }
-
                 dir('infra') {
                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role')  
                        {
@@ -59,17 +35,15 @@ pipeline {
                 dir('infra') {
                      withAWS(roleAccount:'731580992380', role:'Cross-Account-role') 
                      {
-                    sh 'terraform plan -input=false -lock=false -out=tfplan --var-file="../$ENV_TF_VARS"'
+                    sh 'terraform plan -input=false -lock=false -out=tfplan --var-file="../dev.tfvars.json'
                      }
                 }
             }
         }
 
         stage('Approval') {
-            when {
-                allOf {
+            when {        
                     expression { params.action == 'apply' }
-                    expression { BRANCH_NAME ==~ regex }
                 }
             }
             steps {
@@ -90,9 +64,9 @@ pipeline {
 
         stage('Terraform Apply - All') {
             when {
-                allOf{
+ 
                     expression { params.action == 'apply' }
-                    expression { BRANCH_NAME ==~ regex }
+
                 }
             }
 
