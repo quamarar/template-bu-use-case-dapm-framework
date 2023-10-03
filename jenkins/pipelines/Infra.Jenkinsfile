@@ -35,7 +35,7 @@ pipeline {
                 dir('infra') {
                      withAWS(roleAccount:'731580992380', role:'Cross-Account-role') 
                      {
-                    sh 'terraform plan -input=false -lock=false -out=tfplan --var-file="../dev.tfvars.json'
+                    sh 'terraform plan -input=false -lock=false -out=tfplan --var-file=../dev.tfvars.json'
                      }
                 }
             }
