@@ -42,7 +42,7 @@ pipeline {
                 dir('infra') {
                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role')  
                        {
-                        sh 'terraform init --upgrade -reconfigure -no-color -backend-config="key=msil-mvp-tfstate/dapm-terraform.tfstate"''
+                        sh 'terraform init --upgrade -reconfigure -no-color -backend-config="key=msil-mvp-tfstate/dapm-terraform.tfstate"'
                         sh 'terraform validate'
                       
                 }
