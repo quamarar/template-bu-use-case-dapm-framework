@@ -1,26 +1,15 @@
-def jenkins_role = "Jenkins-AssumeRole-ProServe-CrossAccount-Role"
+def jenkins_role = "Cross-Account-role'"
 def environment_mapping = [
-    "main" : "dev",
+    "master" : "dev",
     "uat" : "uat",
     "prod": "production"
 ]
 def target_env = environment_mapping[BRANCH_NAME]
 def tf_config_file = "env/${target_env}.tfvars.json"
-def regex = /(production|main|uat)/
+def regex = /(production|master|uat)/
 
 pipeline {
-    agent {
-        label 'ace_analytics'
-    }
-
-    options {
-        ansiColor('xterm')
-        disableConcurrentBuilds()
-    }
-
-    tools {
-        terraform 'Terraform 1.5.2'
-    }
+    agent any
 
     parameters {
         choice(
@@ -37,17 +26,6 @@ pipeline {
 
     stages {
 
-        stage ('SonarQube analysis') {
-            steps {
-                script {
-                  def scannerHome = tool 'sonarqube'
-                  withSonarQubeEnv("sonarv2") {
-                     sh "${scannerHome}/bin/sonar-scanner"
-                  }
-                }
-            }
-        }
-
         stage('Initialise terraform directory') {
             steps{
 
@@ -62,13 +40,15 @@ pipeline {
                 }
 
                 dir('infra') {
-                    withCredentials([gitUsernamePassword(credentialsId: 'msil-github', gitToolName: 'git-tool')]) {
-                        sh 'terraform init'
+                    withAWS(roleAccount:'731580992380', role:'Cross-Account-role')  
+                       {
+                        sh 'terraform init --upgrade -reconfigure -no-color -backend-config="key=msil-mvp-tfstate/dapm-terraform.tfstate"''
                         sh 'terraform validate'
-                    }
+                      
                 }
             }
         }
+    }
 
         stage('Terraform Plan') {
             when {
@@ -77,7 +57,10 @@ pipeline {
             steps{
                 sh 'printenv'
                 dir('infra') {
+                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role') 
+                     {
                     sh 'terraform plan -input=false -lock=false -out=tfplan --var-file="../$ENV_TF_VARS"'
+                     }
                 }
             }
         }
@@ -91,6 +74,8 @@ pipeline {
             }
             steps {
                 dir('infra') {
+                    withAWS(roleAccount:'731580992380', role:'Cross-Account-role')
+                    {
                     sh 'terraform show -no-color tfplan > tfplan.txt'
 
                     script {
@@ -98,6 +83,7 @@ pipeline {
                         input message: "Apply the plan?",
                         parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                     }
+                }
                 }
             }
         }
@@ -112,6 +98,8 @@ pipeline {
 
             steps {
                 dir('infra') {
+                    withAWS(roleAccount:'731580992380', role:'Cross-Account-role') 
+                    {
                     sh '''
                         terraform show -json tfplan  > tfplan.json
 
@@ -129,6 +117,7 @@ pipeline {
                         fi
                     '''
                 }
+             }
             }
         }
 

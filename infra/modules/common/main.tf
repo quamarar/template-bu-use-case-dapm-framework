@@ -6,7 +6,7 @@ data "aws_caller_identity" "current" {}
 ===============================*/
 
 module "kms_default" {
-  source = "github.com/MSIL-Analytics-ACE/terraform-common-modules//terraform-aws-kms?ref=v1.0.0"
+  source = "git::https://github.com/quamarar/terraform-common-modules//terraform-aws-kms?ref=master"
 
   aliases = [
     "${var.name_prefix}-kms-key"
