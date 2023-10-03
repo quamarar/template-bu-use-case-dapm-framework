@@ -45,7 +45,7 @@ pipeline {
             when {        
                     expression { params.action == 'apply' }
                 }
-            }
+            
             steps {
                 dir('infra') {
                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role')
@@ -68,7 +68,7 @@ pipeline {
                     expression { params.action == 'apply' }
 
                 }
-            }
+            
 
             steps {
                 dir('infra') {
