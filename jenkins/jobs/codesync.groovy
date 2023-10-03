@@ -11,7 +11,7 @@ multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/a
                      repoOwner('MSIL-Analytics-ACE')
                       traits {
                            headWildcardFilter {
-                            includes('main production uat PR-*')  
+                            includes('master production uat PR-*')  
                             excludes('release')
                            }
                             gitHubBranchDiscovery {
