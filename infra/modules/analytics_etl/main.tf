@@ -37,7 +37,7 @@ resource "aws_s3_bucket" "analytics_bucket" {
      server_side_encryption_configuration {
      rule {
        apply_server_side_encryption_by_default {
-         kms_master_key_id = "${var.name_prefix}-kms-key"
+         kms_master_key_id = module.common.key_arn
          sse_algorithm     = "aws:kms"
        }
      }
