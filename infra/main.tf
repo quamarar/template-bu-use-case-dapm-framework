@@ -70,7 +70,6 @@ module "analytics_etl" {
   eap_dq_bucket_name         = var.eap_dq_bucket_name
   use_case_name              = var.use_case_name
   kms_master_key_id          = module.common.key_id
-  kms_key                    = module.common.key_arn
 }
 
 
