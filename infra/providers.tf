@@ -1,9 +1,6 @@
 provider "aws" {
   region = var.region
 
-   assume_role {
-     role_arn = "arn:aws:iam::${var.account_number}:role/Cross-Account-role"
-   }
 
   forbidden_account_ids = [
     "836350033173"
