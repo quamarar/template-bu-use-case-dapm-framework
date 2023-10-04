@@ -46,3 +46,8 @@ variable "kms_master_key_id" {
   type        = any
   description = "KMS Key ID"
 }
+
+variable "kms_key_arn" {
+  type        = any
+  description = "KMS Key ARN"
+}

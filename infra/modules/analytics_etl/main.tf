@@ -71,9 +71,11 @@ resource "aws_athena_database" "athena_db" {
   properties    = try(each.value.properties, null)
   comment       = try(each.value.description, null)
 
- }
- 
-
+      encryption_configuration {
+      encryption_option = "SSE_KMS"
+      kms_key_arn       = var.kms_key_arn
+    }
+}
 
 resource "aws_ssm_parameter" "ssm_params" {
 

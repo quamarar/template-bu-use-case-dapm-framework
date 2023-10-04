@@ -9,6 +9,10 @@ output "kms" {
 output "key_id" {
  value = module.kms_default.key_id
 }
+
+output "key_arn" {
+ value = module.kms_default.key_arn
+}
 /*===============================
 #              S3
 ===============================*/
