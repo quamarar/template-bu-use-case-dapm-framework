@@ -74,22 +74,8 @@ pipeline {
                 dir('infra') {
                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role') 
                     {
-                    sh '''
-                        terraform show -json tfplan  > tfplan.json
+                    sh 'terraform apply -no-color -input=false tfplan'
 
-                        glue_wf_exists=glue_values=`cat tfplan.json | jq '[.resource_changes[] | select( .module_address != null) | select(.module_address | contains("glue_wf"))] | [.[].module_address] | unique | length'`
-
-                        if [ $((glue_wf_exists)) -ne 0 ]
-                        then
-                            echo "Found Glue workflow components. Initiating target deploy"
-                            terraform apply --var-file="../env/dev.tfvars.json" -target="module.analytics_etl.module.glue_wfs" -parallelism=1 -auto-approve
-
-                            echo "Applying overall plan"
-                            terraform apply --var-file="../env/dev.tfvars.json" -auto-approve
-                        else
-                            terraform apply -no-color -lock=false -input=false tfplan
-                        fi
-                    '''
                 }
              }
             }
