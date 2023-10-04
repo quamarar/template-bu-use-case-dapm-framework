@@ -83,12 +83,12 @@ resource "aws_s3_object" "upload_utils" {
   source      = "${var.utils_path}/${each.value}"
   source_hash = filemd5("${var.utils_path}/${each.value}")
 
-  lifecycle {
-    ignore_changes = [
-      tags,
-      tags_all
-    ]
-  }
+  # lifecycle {
+  #   ignore_changes = [
+  #     tags,
+  #     tags_all
+  #   ]
+  # }
 }
 
 resource "aws_s3_object" "upload_ext_scripts" {
@@ -106,12 +106,12 @@ resource "aws_s3_object" "upload_ext_scripts" {
   source      = "${each.value.filePath}/${each.value.fileName}"
   source_hash = filemd5("${each.value.filePath}/${each.value.fileName}")
 
-  lifecycle {
-    ignore_changes = [
-      tags,
-      tags_all
-    ]
-  }
+  # lifecycle {
+  #   ignore_changes = [
+  #     tags,
+  #     tags_all
+  #   ]
+  # }
 }
 
 module "glue_wfs" {
