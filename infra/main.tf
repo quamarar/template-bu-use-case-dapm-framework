@@ -69,6 +69,7 @@ module "analytics_etl" {
   expected_dq_job_count      = var.analytics_etl.expected_dq_job_count
   eap_dq_bucket_name         = var.eap_dq_bucket_name
   use_case_name              = var.use_case_name
+  kms_master_key_id          = module.common.key_id
 }
 
 

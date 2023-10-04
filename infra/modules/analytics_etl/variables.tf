@@ -41,3 +41,8 @@ variable "eap_dq_bucket_name" {
   description = "S3 bucket name from EAP account"
   default     = "random"
 }
+
+variable "kms_master_key_id" {
+  type        = any
+  description = "KMS Key ID"
+}
