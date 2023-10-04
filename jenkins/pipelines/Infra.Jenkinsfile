@@ -82,10 +82,10 @@ pipeline {
                         if [ $((glue_wf_exists)) -ne 0 ]
                         then
                             echo "Found Glue workflow components. Initiating target deploy"
-                            terraform apply --var-file="../$ENV_TF_VARS" -target="module.analytics_etl.module.glue_wfs" -parallelism=1 -auto-approve
+                            terraform apply --var-file="../env/dev.tfvars.json" -target="module.analytics_etl.module.glue_wfs" -parallelism=1 -auto-approve
 
                             echo "Applying overall plan"
-                            terraform apply --var-file="../$ENV_TF_VARS" -auto-approve
+                            terraform apply --var-file="../env/dev.tfvars.json" -auto-approve
                         else
                             terraform apply -no-color -lock=false -input=false tfplan
                         fi
