@@ -1,4 +1,4 @@
-multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/aws-code-sync') {
+multibranchPipelineJob('MSIL/template-bu-use-case-dapm-framework/aws-code-sync') {
 
     branchSources {
         branchSource {

@@ -1,4 +1,4 @@
-multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/terraform-infra-deploy') {
+multibranchPipelineJob('MSIL/template-bu-use-case-dapm-framework/terraform-infra-deploy') {
 
 
     branchSources {

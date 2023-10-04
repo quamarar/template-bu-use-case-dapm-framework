@@ -1,4 +1,4 @@
-multibranchPipelineJob('MSIL_Analytics_ACE/template-bu-use-case-dapm-framework/modelops-model-step-function-orchestrator') {
+multibranchPipelineJob('MSIL/template-bu-use-case-dapm-framework/modelops-model-step-function-orchestrator') {
 
     branchSources {
         branchSource {
