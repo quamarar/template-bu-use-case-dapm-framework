@@ -101,8 +101,10 @@ pipeline {
             }
             steps {
                 dir('infra') {
+                    withAWS(roleAccount:'731580992380', role:'Cross-Account-role') {
                     sh 'terraform plan -destroy -out=tfplan -lock=false --var-file="../$ENV_TF_VARS"'
                     sh 'terraform show  tfplan > tfplan.txt'
+                }
                 }
             }
         }
@@ -116,6 +118,7 @@ pipeline {
             }
             steps {
                 dir('infra') {
+                    withAWS(roleAccount:'731580992380', role:'Cross-Account-role') {
                     script {
                         def plan = readFile 'tfplan.txt'
                         input message: "Delete the stack?",
@@ -123,7 +126,7 @@ pipeline {
                     }
 
                     sh 'terraform destroy -no-color -auto-approve -lock=false  --var-file="../$ENV_TF_VARS"'
-
+                    }
                 }
             }
         }
