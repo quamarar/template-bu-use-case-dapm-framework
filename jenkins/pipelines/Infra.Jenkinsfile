@@ -102,7 +102,7 @@ pipeline {
             steps {
                 dir('infra') {
                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role') {
-                    sh 'terraform plan -destroy -out=tfplan -lock=false --var-file="../$ENV_TF_VARS"'
+                    sh 'terraform plan -destroy -out=tfplan -lock=false --var-file="../env/dev.tfvars.json"'
                     sh 'terraform show  tfplan > tfplan.txt'
                 }
                 }
@@ -125,7 +125,7 @@ pipeline {
                         parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                     }
 
-                    sh 'terraform destroy -no-color -auto-approve -lock=false  --var-file="../$ENV_TF_VARS"'
+                    sh 'terraform destroy -no-color -auto-approve -lock=false  --var-file="../env/dev.tfvars.json"'
                     }
                 }
             }
