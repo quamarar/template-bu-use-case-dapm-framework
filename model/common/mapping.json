@@ -1,0 +1,22 @@
+{
+    "mapping_json_data": {
+        "primary_key": "part_name",
+        "Inference": {
+            "mappingColumn": "default",
+            "all_algorithms": [
+                "lr",
+                "xgb",
+                "rf"
+            ],
+            "mapping": {}
+        },
+        "Training": {
+            "mappingColumn": "default",
+            "all_algorithms": [
+                "lr",
+                "xgb",
+                "rf"
+            ]
+        }
+    }
+}
