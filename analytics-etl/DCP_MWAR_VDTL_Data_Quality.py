@@ -1,11 +1,10 @@
 """
 Prerequisites:
 1. Athena DB(IAC) - <usecase>_data_quality
-2. Parameter to be updated in parameter store to mention the number of dq jobs 
+2. Parameter to be updated in parameter store
 /<usecase_name>/dev/<workflow_name>/expected_dq_job_cnt (This variable signifies the number of DQ jobs that needs to be executed in a workflow)
 This is required for sending consolidated email when all the dq jobs in a glue workflow finished processing
 3. Glue job should have permission to access the parameter in ssm parameter store
-4. Complete the TODO section in the code
 """
 
 import logging
@@ -31,8 +30,7 @@ import dataquality_helper_functions
 from ddb_helper_functions import email_sns
 
 log = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s :: %(message)s', level=logging.INFO)
-logging.info("info")
+logging.basicConfig(format=' %(job_name)s - %(asctime)s - %(message)s ')
 
 sc = SparkContext.getOrCreate()
 glueContext = GlueContext(sc)
@@ -46,36 +44,32 @@ day = todays_date.day
 
 if __name__ == '__main__':
 
-    ########################################################################################################################
-    ### TODO - TO BE MODIFIED BY DEV : Parameters to read the source data into the glue dataframe
-    """
-    Required Inputs:
-    source_database_name: string: Name of the athena database which has the input athena table
-    source: string: Name of the athena table having input data
-    column_list: string: Comma separated string of required column names
-                         1. Columns on which data quality needs to be applied
-                         2. Key columns which are required to identify any single record (it is needed for debugging)
-    """
-    source_database_name = 'msil_datalake_curated_sr2_dblink'
-    source = 'warranty_de_mwar_clm2'
-    column_list = 'clm2_deind,CLM2_DELR_CD,CLM2_FOR_CD,CLM2_OUTLET_CD,CLM2_DUP_SL_NO,CLM2_ISSUE_NO,concat(clm2_deind,CLM2_DELR_CD,CLM2_FOR_CD,CLM2_OUTLET_CD,CLM2_DUP_SL_NO,CLM2_ISSUE_NO) as concat_primary'
-
-    evaluate_dataquality_ruleset = """
-        Rules = [
-            IsPrimaryKey "concat_primary",
-             IsComplete "clm2_deind",
-             IsComplete "CLM2_DELR_CD",
-             IsComplete "CLM2_FOR_CD",
-             IsComplete "CLM2_OUTLET_CD",
-             IsComplete "CLM2_DUP_SL_NO",
-             IsComplete "CLM2_ISSUE_NO"
-
-            ] """
-
-    ########################################################################################################################
-    dq_overall_status_rule_name = 'dq_overall_status'
     try:
 
+        ########################################################################################################################
+        ### TO BE MODIFIED BY DEV : Parameters to read the source data into the glue dataframe
+        """
+        Required Inputs:
+        source_database_name: string: Name of the athena database which has the input athena table
+        source: string: Name of the athena table having input data
+        column_list: string: Comma separated string of required column names
+                             1. Columns on which data quality needs to be applied
+                             2. Key columns which are required to identify any single record (it is needed for debugging)
+        """
+
+        column_list = 'VDTL_FUEL,VDTL_TM_TYPE,VDTL_ENGI_PREFIX,VDTL_PMOD_DESC'
+
+        evaluate_dataquality_ruleset = """
+            Rules = [
+                Completeness "VDTL_FUEL" > 0.01,
+                Completeness "VDTL_TM_TYPE" > 0.01,
+                Completeness "VDTL_ENGI_PREFIX" > 0.01,
+                Completeness "VDTL_FUEL" > 0.01,
+                Completeness "VDTL_PMOD_DESC" > 0.01
+                ] """
+
+        ########################################################################################################################
+        dq_overall_status_rule_name = 'dq_overall_status'
         log.info("Entered main")
         args = getResolvedOptions(sys.argv,
                                   ["WORKFLOW_NAME",
@@ -86,7 +80,10 @@ if __name__ == '__main__':
                                    "region",
                                    "dqjob_cnt_parameter_name",
                                    "email_ssn_topic_arn",
-                                   "usecase_name"
+                                   "usecase_name",
+                                   "source_database_name",
+                                   "source_table",
+                                   "eap_central_bucket"
                                    ])
 
         ##### Parameters passed as parameter through IAC
@@ -99,14 +96,18 @@ if __name__ == '__main__':
         dqjob_cnt_parameter_name = args['dqjob_cnt_parameter_name']
         email_ssn_topic_arn = args['email_ssn_topic_arn']
         usecase_name = args['usecase_name']
+        source_database_name = args['source_database_name']
+        source_table = args['source_table']
+        eap_central_bucket=args['eap_central_bucket']
 
         ########################################################################################################################
         ##### Parameters derived from provided parameters
-
+        source = source_table
         detailed_outcome_table = source
         detailed_dq_target_file_path = f's3://{dq_bucket}/etl_data_quality/{detailed_outcome_table}'
         consolidated_dq_target_file_path = f's3://{dq_bucket}/etl_data_quality/{consolidated_dq_table}'
-
+        dashboard_data_quality_path = f's3://{eap_central_bucket}/etl-data-quality/usecase_name={usecase_name}/year={year}/month={month}/day={day}/corelation_id={corelation_id}'
+        
         boto3_session = boto3.session.Session()
         athena_client = pythena.Athena(database=dq_athena_db, session=boto3_session, region=region)
         sns_client = boto3.client('sns', region_name=region)
@@ -128,7 +129,7 @@ if __name__ == '__main__':
 
         ########################################################################################################################
 
-        consolidated_dq_result_dyf = after_processing_generate_dq_overall_status_consolidated(glueContext, spark,
+        (consolidated_dq_result_dyf,final_dq_status) = after_processing_generate_dq_overall_status_consolidated(glueContext, spark,
                                                                                               consolidated_dq_result_dyf,
                                                                                               corelation_id,
                                                                                               dq_overall_status_rule_name,
@@ -143,24 +144,17 @@ if __name__ == '__main__':
         # Writing consolidated data to S3 and updating glue catalog
         gluedf_s3_loading(glueContext, consolidated_dq_result_dyf, consolidated_dq_target_file_path, dq_athena_db,
                           consolidated_dq_table)
-
-        ########################################################################################################################
-        #### Code for sending email when all dq jobs of workflow is completed
-
-        #Fetch the number of DQ jobs which are completed for the current workflow_id
-        dq_completion_job_cnt = get_completed_dqjobs_cnt_from_worflowid(athena_client, dq_athena_db, consolidated_dq_table,
-        # Fetch the expected number of DQ jobs which are to be completed for sending the email
-        expected_job_cnt = get_expected_dqjob_cnt_ssm_store(dqjob_cnt_parameter_name, region)
-
-        subject = f"{usecase_name}:{workflow_name}:Data Quality Glue Job Status"
-        email_message = get_email_message(athena_client, dq_athena_db, consolidated_dq_table, corelation_id)
-
-        if int(dq_completion_job_cnt) < int(expected_job_cnt):
-            log.info(f"Workflow not completed \n Following dq jobs have processing completed \n {email_message}")
-        else:
-            response = email_sns(sns_client, email_ssn_topic_arn, email_message, subject)
-
-            log.info("Email sent")
+                          
+        ########################################################################
+        # Write the data in parquet in cross account bucket
+        
+        log.info(dashboard_data_quality_path)
+    
+        final_df = consolidated_dq_result_dyf.toDF()
+        final_df.write.mode('append').parquet(
+            dashboard_data_quality_path)
+        log.info(
+            f"Output data is written in parquet in cross account bucket: {dashboard_data_quality_path}")
     except Exception as error:
         log.error("Error ->{}".format(error))
 
@@ -173,6 +167,34 @@ if __name__ == '__main__':
                               consolidated_dq_table)
         except Exception as error:
             log.error("Error ->{}".format(error))
+            raise error
+        raise error
 
-        log.info("Ended the program cleanly")
-        sys.exit(1)
+    try:
+        ########################################################################################################################
+        ### Code for sending email when all dq jobs of workflow is completed
+
+        # Fetch the number of DQ jobs which are completed for the current workflow_id
+        dq_completion_job_cnt = get_completed_dqjobs_cnt_from_worflowid(athena_client, dq_athena_db,
+                                                                        consolidated_dq_table, corelation_id)
+        # Fetch the expected number of DQ jobs which are to be completed for sending the email
+        expected_job_cnt = get_expected_dqjob_cnt_ssm_store(dqjob_cnt_parameter_name, region)
+
+        subject = f"{usecase_name}:{workflow_name}:Data Quality Glue Job Status"
+        email_message = get_email_message(athena_client, dq_athena_db, consolidated_dq_table, corelation_id)
+
+        if int(dq_completion_job_cnt) < int(expected_job_cnt):
+            log.info(f"Workflow not completed \n Following dq jobs have processing completed \n {email_message}")
+        else:
+            response = email_sns(sns_client, email_ssn_topic_arn, email_message, subject)
+
+            log.info("Email sent")
+
+        ########################################################################################################################
+        ## Failing the glue job when overall dq_status is failed
+        if final_dq_status == 'Failed':
+            sys.exit(
+                f"Final DataQuality Result for the {source_table} is {final_dq_status} in the workflow id {corelation_id}")
+    except Exception as error:
+        log.error("Error ->{}".format(error))
+        raise error

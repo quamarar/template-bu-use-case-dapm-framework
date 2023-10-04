@@ -1,0 +1,535 @@
+{
+    "workflows": {
+        "socialmedia_aws": {
+            "description": "",
+            "default_run_properties": {},
+            "max_concurrent_runs": 1,
+            "triggers": {
+                "social_media_aws": {
+                    "type": "SCHEDULED",
+                    "schedule": "cron(30 5 ? * WED *)",
+                    "actions": [
+                        {
+                            "job_name": "amlgo_socialmedia-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "social_media_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_socialmedia-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "socialmedia_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                }
+            }
+        },
+        "redshift_aws": {
+            "description": "",
+            "default_run_properties": {},
+            "max_concurrent_runs": 1,
+            "triggers": {
+                "redshift_aws": {
+                    "type": "SCHEDULED",
+                    "schedule": "cron(30 7 * * ? *)",
+                    "actions": [
+                        {
+                            "job_name": "amlgo_line_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "line_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_line_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_warranty_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "amlgo_warranty_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_warranty_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_dispatchsales_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "amlgo_dispatch_sales_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_dispatchsales_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_ecn_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "ECN_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_ecn_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_ftir_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "ftir_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_ftir_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_gca_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "gca_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_gca_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_hinkai_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "hinkai_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_hinkai_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_production_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "production_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_production_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_sbpr_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "sbpr_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_sbpr_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_sqr_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "sendai_redhisft_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_sqr_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_spares_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "spares_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_spares_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_supply_redshift-aws",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                },
+                "supply_redshift_aws": {
+                    "type": "CONDITIONAL",
+                    "schedule": null,
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "job_name": "amlgo_supply_redshift-aws",
+                                "state": "SUCCEEDED",
+                                "logical_operator": "EQUALS",
+                                "crawler_name": null,
+                                "crawler_state": null
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "updatelog",
+                            "crawler_name": null,
+                            "security_configuration": null,
+                            "timeout": null,
+                            "arguments": {},
+                            "notification_property": {}
+                        }
+                    ],
+                    "event_batching_condition": null
+                }
+            }
+        },
+        "preprocess_with_dq": {
+            "description": "",
+            "default_run_properties": {},
+            "max_concurrent_runs": 1,
+            "triggers": {
+                "preprocess_with_dq": {
+                    "type": "SCHEDULED",
+                    "state": "ACTIVATED",
+                    "schedule": "cron(0 5 * * ? *)",
+                    "actions": [
+                        {
+                            "job_name": "masterdata"
+                        }
+                    ]
+                },
+                "preprocess_jobs_after_dq": {
+                    "type": "CONDITIONAL",
+                    "state": "ACTIVATED",
+                    "predicate": {
+                        "logical": "AND",
+                        "conditions": [
+                            {
+                                "logical_operator": "EQUALS",
+                                "job_name": "mmat_item_compl_data_quality",
+                                "state": "SUCCEEDED"
+                            },
+                            {
+                                "logical_operator": "EQUALS",
+                                "job_name": "mwar_clam_data_quality",
+                                "state": "SUCCEEDED"
+                            },
+                            {
+                                "logical_operator": "EQUALS",
+                                "job_name": "mwar_clm2_data_quality",
+                                "state": "SUCCEEDED"
+                            },
+                            {
+                                "logical_operator": "EQUALS",
+                                "job_name": "mwar_vdtl_data_quality",
+                                "state": "SUCCEEDED"
+                            },
+                            {
+                                "logical_operator": "EQUALS",
+                                "job_name": "ssal_invc_data_quality",
+                                "state": "SUCCEEDED"
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "amlgo_warranty-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_spares-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_production-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_sbpr-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_ecn-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_sendai-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_supply-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_hinkai-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_ftir-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_line-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_gca-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_sqr-aws",
+                            "arguments": {}
+                        },
+                        {
+                            "job_name": "amlgo_dispatchsales-aws",
+                            "arguments": {}
+                        }
+                    ]
+                },
+                "gatekeeper_dq_jobs": {
+                    "type": "CONDITIONAL",
+                    "state": "ACTIVATED",
+                    "predicate": {
+                        "logical": "ANY",
+                        "conditions": [
+                            {
+                                "logical_operator": "EQUALS",
+                                "job_name": "masterdata",
+                                "state": "SUCCEEDED"
+                            }
+                        ]
+                    },
+                    "actions": [
+                        {
+                            "job_name": "mmat_item_compl_data_quality"
+                        },
+                        {
+                            "job_name": "mwar_clam_data_quality"
+                        },
+                        {
+                            "job_name": "mwar_clm2_data_quality"
+                        },
+                        {
+                            "job_name": "mwar_vdtl_data_quality"
+                        },
+                        {
+                            "job_name": "ssal_invc_data_quality"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
