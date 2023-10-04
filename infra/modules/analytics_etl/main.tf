@@ -73,7 +73,7 @@ resource "aws_athena_database" "athena_db" {
 
     encryption_configuration {
       encryption_option = "SSE_KMS"
-      kms_key_arn       = var.kms_key_arn
+      kms_key           = var.kms_key_arn
     }
 }
 
