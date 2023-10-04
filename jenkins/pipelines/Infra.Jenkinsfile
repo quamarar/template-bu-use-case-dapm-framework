@@ -111,11 +111,9 @@ pipeline {
 
         stage('Destroy') {
             when {
-                allOf {
                     expression { params.action == 'destroy' }
-                    expression { BRANCH_NAME ==~ regex }
                 }
-            }
+            
             steps {
                 dir('infra') {
                     withAWS(roleAccount:'731580992380', role:'Cross-Account-role') {
