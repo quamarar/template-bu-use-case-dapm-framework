@@ -23,7 +23,7 @@ multibranchPipelineJob('MSIL/template-bu-use-case-dapm-framework/aws-code-sync')
                     }
                 } 
             strategy {
-                defaultBranchPropertyStrategy  {
+                NamedExceptionsBranchPropertyStrategy {
                     props {
                         NamedExceptionsBranchProperty()
                     }
